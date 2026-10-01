@@ -1,0 +1,20 @@
+# Old base image (Oct 2022) — already ships with vulnerable OS packages
+# (openssl, glibc, zlib, etc. all have known CVEs in this version)
+FROM python:3.10.8-slim-bullseye
+
+WORKDIR /app
+
+# Install deliberately vulnerable Python packages
+# flask==2.0.1       — CVE-2023-30861 (session cookie disclosure)
+# requests==2.25.0   — outdated, transitive vulnerabilities
+# urllib3==1.26.5     — CVE-2023-43804 (cookie leak on redirect)
+# jinja2==3.0.1      — CVE-2024-22195 (xmlattr HTML injection)
+# werkzeug==2.0.1    — CVE-2024-34069 (debugger RCE)
+RUN pip install --no-cache-dir \
+    flask==2.0.1 \
+    requests==2.25.0 \
+    urllib3==1.26.5 \
+    jinja2==3.0.1 \
+    werkzeug==2.0.1
+
+CMD ["python", "-c", "print('Vulnerable demo app')"]

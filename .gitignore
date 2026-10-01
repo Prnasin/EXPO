@@ -1,0 +1,51 @@
+# Environment variables & secrets (CRITICAL: Never commit .env)
+.env
+.env.local
+*.env
+
+# Large binaries & archives (Trivy is installed dynamically in CI)
+trivy-bin/
+trivy.zip
+*.exe
+*.zip
+
+# Python cache & build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Testing & temp outputs
+tests/scenario_*.json
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor & OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
