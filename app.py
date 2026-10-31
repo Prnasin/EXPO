@@ -272,7 +272,10 @@ with tab1:
                 else:
                     return 'background-color: #e6f7e6; color: #006600;'
                     
-            st.dataframe(df.style.applymap(highlight_priority, subset=['Assigned Priority']), use_container_width=True)
+            try:
+                st.dataframe(df.style.map(highlight_priority, subset=['Assigned Priority']), use_container_width=True)
+            except AttributeError:
+                st.dataframe(df.style.applymap(highlight_priority, subset=['Assigned Priority']), use_container_width=True)
 
 # ── Tab 2: EPSS vs CVSS Explorer ──────────────────────────────────────────────
 with tab2:
@@ -288,7 +291,7 @@ with tab2:
     
     comparison_data = [
         {"CVE": "CVE-2023-43804 (urllib3)", "CVSS": 9.8, "EPSS": 0.42, "CISA_KEV": "YES", "Action": "BLOCK (Active Exploits)"},
-        {"CVE-2024-34069 (werkzeug)": "CVE-2024-34069", "CVSS": 8.1, "EPSS": 0.38, "CISA_KEV": "YES", "Action": "BLOCK (Active Exploits)"},
+        {"CVE": "CVE-2024-34069 (werkzeug)", "CVSS": 8.1, "EPSS": 0.38, "CISA_KEV": "YES", "Action": "BLOCK (Active Exploits)"},
         {"CVE": "CVE-2023-30861 (flask)", "CVSS": 7.5, "EPSS": 0.12, "CISA_KEV": "NO", "Action": "WARN (Medium Risk)"},
         {"CVE": "CVE-2023-29469 (libxml2)", "CVSS": 7.5, "EPSS": 0.001, "CISA_KEV": "NO", "Action": "SUPPRESS (Noise)"},
         {"CVE": "CVE-2022-28928 (libxml2)", "CVSS": 5.5, "EPSS": 0.0004, "CISA_KEV": "NO", "Action": "SUPPRESS (Noise)"},
@@ -320,16 +323,16 @@ with tab3:
         """
         ```mermaid
         flowchart LR
-            A[Container Image] --> B[Trivy Scanner]
-            B --> C[Raw CVE List (200+)]
-            C --> D[Threat Intel Enrichment]
-            D --> E[FIRST.org EPSS API]
-            D --> F[CISA KEV Catalog]
-            E --> G[Google Gemini AI Triage]
+            A["Container Image"] --> B["Trivy Scanner"]
+            B --> C["Raw CVE List (200+)"]
+            C --> D["Threat Intel Enrichment"]
+            D --> E["FIRST.org EPSS API"]
+            D --> F["CISA KEV Catalog"]
+            E --> G["Google Gemini AI Triage"]
             F --> G
-            G --> H[Actionable Report (5 Real Threats)]
-            H --> I[Slack Alert]
-            H --> J[CI/CD Gate: Pass/Fail]
+            G --> H["Actionable Report (5 Real Threats)"]
+            H --> I["Slack Alert"]
+            H --> J["CI/CD Gate: Pass/Fail"]
         ```
         """
     )
