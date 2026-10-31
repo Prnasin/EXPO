@@ -117,15 +117,32 @@ with st.sidebar:
     st.caption("AI-Powered Real-World Exploit Prioritization")
     st.markdown("---")
     
-    st.subheader("⚙️ Settings")
-    api_key_input = st.text_input(
-        "Gemini API Key (Optional)",
-        type="password",
-        value=os.environ.get("GEMINI_API_KEY", ""),
-        help="Free key from https://aistudio.google.com/apikey. If empty, the agent uses rule-based deterministic triage."
-    )
-    if api_key_input:
-        config.GEMINI_API_KEY = api_key_input
+    st.subheader("⚙️ AI Engine Status")
+    
+    # Check if key is pre-configured in Streamlit Secrets or Environment
+    preconfigured_key = None
+    try:
+        if "GEMINI_API_KEY" in st.secrets:
+            preconfigured_key = st.secrets["GEMINI_API_KEY"]
+    except Exception:
+        pass
+    if not preconfigured_key:
+        preconfigured_key = os.environ.get("GEMINI_API_KEY")
+
+    if preconfigured_key:
+        config.GEMINI_API_KEY = preconfigured_key
+        st.success("🟢 Gemini AI Engine: Active")
+        st.caption("AI-powered reasoning and remediation enabled.")
+    else:
+        api_key_input = st.text_input(
+            "Gemini API Key (Optional)",
+            type="password",
+            help="Free key from https://aistudio.google.com/apikey. If empty, the agent uses rule-based deterministic triage."
+        )
+        if api_key_input:
+            config.GEMINI_API_KEY = api_key_input
+        else:
+            st.info("ℹ️ Running in Deterministic Mode (No key needed)")
         
     st.markdown("---")
     st.markdown("### 📚 Threat Intel Sources")
