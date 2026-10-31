@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import sys
 import logging
 from collections import Counter
@@ -98,6 +99,45 @@ def run_pipeline(trivy_json_path: Optional[str] = None, image_name: Optional[str
             logger.info(f"  → Remediation Steps:")
             for i, step in enumerate(remediation, 1):
                 logger.info(f"    {i}. {step}")
+
+        # Save triage results to JSON report
+        try:
+            with open("triage-report.json", "w", encoding="utf-8") as f:
+                json.dump(triage_results, f, indent=2)
+            logger.info("  → Triage report saved to triage-report.json")
+        except Exception as e:
+            logger.warning(f"Failed to save triage-report.json: {e}")
+
+        # Render GitHub Step Summary if running in CI
+        summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+        if summary_path:
+            try:
+                decision = triage_results.get("gate_decision", "FAIL")
+                gate_icon = "🛑 BLOCKED (Deployment Prevented)" if decision == "FAIL" else "✅ PASSED (Ready to Deploy)"
+                suppressed = triage_results.get("suppressed_noise_count", 0)
+                reduction_pct = round((suppressed / max(total_cves, 1)) * 100, 1)
+                
+                with open(summary_path, "a", encoding="utf-8") as sf:
+                    sf.write("## 🛡️ DevSecOps Container Vulnerability Triage Report\n\n")
+                    sf.write(f"| Metric | Result |\n|---|---|\n")
+                    sf.write(f"| **Gate Decision** | **{gate_icon}** |\n")
+                    sf.write(f"| **Overall Risk Score** | **{triage_results.get('risk_score', 'N/A')}/100** |\n")
+                    sf.write(f"| **Total CVEs Scanned** | {total_cves} |\n")
+                    sf.write(f"| **Noise Suppressed** | {suppressed} ({reduction_pct}% reduction) |\n")
+                    sf.write(f"| **Active Exploited CVEs** | {critical_count} |\n\n")
+                    sf.write(f"### 📋 Executive Summary\n{triage_results.get('executive_summary', 'N/A')}\n\n")
+                    if action_items:
+                        sf.write("### 🚨 Critical Action Items\n| CVE | Package | Installed | Fixed | Reason |\n|---|---|---|---|---|\n")
+                        for item in action_items:
+                            sf.write(f"| `{item.get('cve_id')}` | `{item.get('package')}` | `{item.get('current_version', '-')}` | `{item.get('fixed_version', '-')}` | {item.get('reason', '')} |\n")
+                        sf.write("\n")
+                    if remediation:
+                        sf.write("### 🛠️ Remediation Steps\n")
+                        for i, step in enumerate(remediation, 1):
+                            sf.write(f"{i}. {step}\n")
+                        sf.write("\n")
+            except Exception as e:
+                logger.warning(f"Failed to write GITHUB_STEP_SUMMARY: {e}")
 
         # ── Step 5/5: Notify & Gate ─────────────────────────────────────
         logger.info("[Step 5/5] 📨 Sending Slack notification...")
