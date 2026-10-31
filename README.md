@@ -2,7 +2,20 @@
 
 > An intelligent, zero-cost pipeline that transforms noisy container vulnerability scans into actionable security intelligence using real-time threat data and AI-powered reasoning.
 
-![Python](https://img.shields.io/badge/Python-3.10+-blue) ![License](https://img.shields.io/badge/License-MIT-green) ![Cost](https://img.shields.io/badge/Cost-$0-success) ![CI](https://img.shields.io/badge/CI-GitHub_Actions-lightgrey)
+[![DevSecOps CI/CD](https://github.com/Prnasin/EXPO/actions/workflows/devsecops-triage.yml/badge.svg)](https://github.com/Prnasin/EXPO/actions)
+[![Live Demo](https://img.shields.io/badge/Streamlit-Live_Dashboard-FF4B4B?style=flat&logo=streamlit)](https://share.streamlit.io)
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Cost](https://img.shields.io/badge/Cost-$0-success)
+
+---
+
+### 🌐 Quick Links
+- **Interactive Web Dashboard**: [Live Streamlit App](https://share.streamlit.io) *(Claiming the Functional Deployed Prototype Bonus)*
+- **GitHub Actions Pipeline**: [Latest Automated Runs & Step Summaries](https://github.com/Prnasin/EXPO/actions)
+- **Demo Vulnerable Dockerfile**: [docker/Dockerfile.demo](docker/Dockerfile.demo)
+
+---
 
 ## 🎯 The Problem
 
